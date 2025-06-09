@@ -118,6 +118,14 @@ void OptolinkKW::_sync() {
 void OptolinkKW::_send() {
   uint8_t buff[MAX_DP_LENGTH + 4];
   OptolinkDP* dp = _queue.front();
+  ESP_LOGD(TAG, "KW _send: queue size = %d", _queue.size());
+  ESP_LOGD(TAG, "KW _send: dp = %p, dp->data = %p", dp, dp ? dp->data : nullptr);
+  
+  if (!dp) {
+    ESP_LOGW(TAG, "KW _send: dp is null!");
+    return;
+  }
+  
   uint8_t length = dp->length;
   uint16_t address = dp->address;
   if (dp->write) {
@@ -127,7 +135,12 @@ void OptolinkKW::_send() {
     buff[2] = address & 0xFF;
     buff[3] = length;
     // add value to message
+    ESP_LOGD(TAG, "KW send: about to copy from dp->data = %p, length = %d", dp->data, length);
+    if (dp->data && length > 0) {
+      ESP_LOGD(TAG, "KW send: dp->data[0] = 0x%02X before memcpy", dp->data[0]);
+    }
     memcpy(&buff[4], dp->data, length);
+    ESP_LOGD(TAG, "KW send: buff[4] = 0x%02X after memcpy", buff[4]);
     ESP_LOGD(TAG, "KW send: writing data[0] = 0x%02X to address 0x%04X", dp->data[0], address);
     _rcvLen = 1;  // expected answer length is only ACK (0x00)
     _uart->write_array(buff, 4 + length);
