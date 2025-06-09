@@ -18,13 +18,15 @@ class OPTOLINKSelect : public select::Select, public Datapoint {
     void encode(uint8_t* raw, uint8_t length, const std::string& data);
 
     void add_mapping(int key, const std::string& value);
+    void set_map(std::map<std::string, std::string> *mapping);
 
   protected:
     void control(const std::string& value) override;
     
   private:
-    std::map<int, std::string> value_to_option_map_;
-    std::map<std::string, int> option_to_value_map_;
+    std::map<std::string, std::string> *mapping_ = nullptr;
+    void datapoint_value_changed(const std::string& value);
+    void datapoint_value_changed(uint8_t value);
 
 };
 

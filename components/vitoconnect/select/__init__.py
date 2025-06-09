@@ -40,7 +40,7 @@ async def to_code(config):
     cg.add(var.setAddress(config[CONF_ADDRESS]))
     cg.add(var.setLength(config[CONF_BYTES]))
     
-    # Set up the value mapping
+    # Set up the value mapping using the add_mapping method
     for item in config[CONF_MAP]:
         try:
             key = int(item[CONF_FROM])
