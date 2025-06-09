@@ -58,10 +58,35 @@ OptolinkDP::OptolinkDP(const OptolinkDP& obj) {
   write = obj.write;
   data = nullptr;
   arg = obj.arg;
-  if (write) {
+  if (write && obj.data) {
     data = new uint8_t[length];
     memcpy(data, obj.data, length);
+    ESP_LOGD("vitoconnect.dp", "OptolinkDP copy constructor: copied data[0] = 0x%02X from %p to %p", data[0], obj.data, data);
   }
+}
+
+OptolinkDP& OptolinkDP::operator=(const OptolinkDP& obj) {
+  if (this != &obj) {
+    // Clean up existing data
+    if (data) {
+      delete[] data;
+      data = nullptr;
+    }
+    
+    // Copy members
+    address = obj.address;
+    length = obj.length;
+    write = obj.write;
+    arg = obj.arg;
+    
+    // Deep copy the data if it's a write operation
+    if (write && obj.data) {
+      data = new uint8_t[length];
+      memcpy(data, obj.data, length);
+      ESP_LOGD("vitoconnect.dp", "OptolinkDP assignment: copied data[0] = 0x%02X to %p", data[0], data);
+    }
+  }
+  return *this;
 }
 
 OptolinkDP::~OptolinkDP() {

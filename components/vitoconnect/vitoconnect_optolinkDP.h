@@ -73,6 +73,13 @@ class OptolinkDP {
   OptolinkDP(const OptolinkDP& obj);
 
   /**
+   * @brief Assignment operator for the OptolinkDP class.
+   * 
+   * @param obj Object to be assigned.
+   */
+  OptolinkDP& operator=(const OptolinkDP& obj);
+
+  /**
    * @brief Destroy the OptolinkDP object
    * 
    */
