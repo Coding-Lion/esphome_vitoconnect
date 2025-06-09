@@ -65,12 +65,15 @@ void OPTOLINKSelect::encode(uint8_t* raw, uint8_t length, const std::string& dat
     // Find the key for this value
     for (auto it = mapping_->begin(); it != mapping_->end(); ++it) {
       if (it->second == data) {
-        try {
-          int key = std::stoi(it->first);
+        // Convert string to integer safely without exceptions
+        char* endptr;
+        long key_long = strtol(it->first.c_str(), &endptr, 10);
+        if (*endptr == '\0' && key_long >= 0 && key_long <= 255) {
+          int key = static_cast<int>(key_long);
           raw[0] = static_cast<uint8_t>(key);
           ESP_LOGD(TAG, "Encoded option '%s' to value %d", data.c_str(), key);
           return;
-        } catch (const std::exception& e) {
+        } else {
           ESP_LOGW(TAG, "Invalid key '%s' for encoding", it->first.c_str());
         }
       }
