@@ -51,4 +51,5 @@ async def to_code(config):
 
     # Add select to component hub (VitoConnect)
     hub = await cg.get_variable(config[CONF_VITOCONNECT_ID])
+    cg.add(var.set_parent(hub))
     cg.add(hub.register_datapoint(var)) 

@@ -58,15 +58,13 @@ class VitoConnect : public uart::UARTDevice, public PollingComponent {
      * 
      * The onData callback will be launched on success.
      * 
-     * @tparam D Type of datapoint (inherited from class `Datapoint`)
-     * @tparam T Type of the value to be written
-     * @param datapoint Datapoint to be read, passed by reference.
-     * @param value Value to be written
+     * @param datapoint Datapoint to be written
+     * @param data Data to write
+     * @param length Length of data
      * @return true Enqueueing was successful
      * @return false Enqueueing failed (eg. queue full)
      */
-    // template<class D, typename T>
-    // bool write(D& datapoint, T value);  // NOLINT todo: make it a const ref or pointer?
+    bool write_datapoint(Datapoint* datapoint, uint8_t* data, uint8_t length);
 
   protected:
 

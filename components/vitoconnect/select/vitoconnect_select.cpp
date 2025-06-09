@@ -1,4 +1,5 @@
 #include "vitoconnect_select.h"
+#include "../vitoconnect.h"
 #include "esphome/core/log.h"
 
 static const char *const TAG = "vitoconnect.select";
@@ -90,18 +91,30 @@ void OPTOLINKSelect::control(const std::string& value) {
     return;
   }
 
+  if (!parent_) {
+    ESP_LOGW(TAG, "No parent component configured for select");
+    return;
+  }
+
   for (auto it = mapping_->begin(); it != mapping_->end(); ++it) {
     if (it->second == value) {
       ESP_LOGI(TAG, "Control of select %s to value %s", get_name().c_str(), it->first.c_str());
       
-      // Encode and trigger write to device
+      // Encode the value to raw data
       uint8_t raw_data[1];
       encode(raw_data, 1, value);
       
-      // Note: The actual writing to the device would need to be handled by the parent vitoconnect component
-      // This would require calling back to the parent component to trigger a write operation
+      // Write to device via parent component
+      bool success = parent_->write_datapoint(this, raw_data, 1);
       
-      publish_state(value);
+      if (success) {
+        ESP_LOGD(TAG, "Write request sent successfully");
+        // Don't publish state immediately - wait for confirmation from device
+        // The state will be updated when the device responds with the written value
+      } else {
+        ESP_LOGW(TAG, "Failed to send write request");
+      }
+      
       break;
     }
   }

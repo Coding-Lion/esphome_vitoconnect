@@ -89,5 +89,29 @@ void VitoConnect::_onError(uint8_t error, void* arg) {
   delete cbArg;
 }
 
+bool VitoConnect::write_datapoint(Datapoint* datapoint, uint8_t* data, uint8_t length) {
+  if (!_optolink) {
+    ESP_LOGW(TAG, "Optolink not initialized");
+    return false;
+  }
+  
+  if (length != datapoint->getLength()) {
+    ESP_LOGW(TAG, "Write data length %d doesn't match datapoint length %d", length, datapoint->getLength());
+    return false;
+  }
+  
+  CbArg* arg = new CbArg(this, datapoint);
+  bool success = _optolink->write(datapoint->getAddress(), length, data, reinterpret_cast<void*>(arg));
+  
+  if (!success) {
+    delete arg;
+    ESP_LOGW(TAG, "Failed to enqueue write request for address 0x%04X", datapoint->getAddress());
+  } else {
+    ESP_LOGD(TAG, "Write request enqueued for address 0x%04X, length %d", datapoint->getAddress(), length);
+  }
+  
+  return success;
+}
+
 }  // namespace vitoconnect
 }  // namespace esphome

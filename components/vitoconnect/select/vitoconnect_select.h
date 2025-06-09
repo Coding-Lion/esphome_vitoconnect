@@ -7,11 +7,15 @@
 namespace esphome {
 namespace vitoconnect {
 
+class VitoConnect;  // Forward declaration
+
 class OPTOLINKSelect : public select::Select, public Datapoint {
 
   public:
     OPTOLINKSelect();
     ~OPTOLINKSelect();
+
+    void set_parent(VitoConnect* parent) { parent_ = parent; }
 
     void decode(uint8_t* data, uint8_t length, Datapoint* dp = nullptr) override;
     void encode(uint8_t* raw, uint8_t length, void* data) override;
@@ -25,6 +29,7 @@ class OPTOLINKSelect : public select::Select, public Datapoint {
     
   private:
     std::map<std::string, std::string> *mapping_ = nullptr;
+    VitoConnect* parent_ = nullptr;
     void datapoint_value_changed(const std::string& value);
     void datapoint_value_changed(uint8_t value);
 
