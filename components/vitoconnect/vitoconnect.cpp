@@ -100,10 +100,17 @@ bool VitoConnect::write_datapoint(Datapoint* datapoint, uint8_t* data, uint8_t l
     return false;
   }
   
-  ESP_LOGD(TAG, "write_datapoint called with data[0] = 0x%02X", data[0]);
+  // Create a temporary copy of the data to ensure it stays valid
+  uint8_t* temp_data = new uint8_t[length];
+  memcpy(temp_data, data, length);
+  
+  ESP_LOGD(TAG, "write_datapoint called with data[0] = 0x%02X, temp_data[0] = 0x%02X", data[0], temp_data[0]);
   
   CbArg* arg = new CbArg(this, datapoint);
-  bool success = _optolink->write(datapoint->getAddress(), length, data, reinterpret_cast<void*>(arg));
+  bool success = _optolink->write(datapoint->getAddress(), length, temp_data, reinterpret_cast<void*>(arg));
+  
+  // Clean up temp_data - it's been copied by OptolinkDP constructor
+  delete[] temp_data;
   
   if (!success) {
     delete arg;

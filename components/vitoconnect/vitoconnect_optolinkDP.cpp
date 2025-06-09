@@ -65,7 +65,10 @@ OptolinkDP::OptolinkDP(const OptolinkDP& obj) {
 }
 
 OptolinkDP::~OptolinkDP() {
-  if (data) delete[] data;
+  if (data) {
+    ESP_LOGD("vitoconnect.dp", "OptolinkDP destructor: deleting data at %p", data);
+    delete[] data;
+  }
 }
 
 }  // namespace vitoconnect
