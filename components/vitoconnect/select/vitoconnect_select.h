@@ -2,6 +2,7 @@
 
 #include "esphome/components/select/select.h"
 #include "../vitoconnect_datapoint.h"
+#include "../vitoconnect_optolink.h"
 #include <map>
 
 namespace esphome {
@@ -30,6 +31,7 @@ class OPTOLINKSelect : public select::Select, public Datapoint {
   private:
     std::map<std::string, std::string> *mapping_ = nullptr;
     VitoConnect* parent_ = nullptr;
+    uint8_t write_buffer_[MAX_DP_LENGTH];  // Buffer to store data for writing
     void datapoint_value_changed(const std::string& value);
     void datapoint_value_changed(uint8_t value);
 

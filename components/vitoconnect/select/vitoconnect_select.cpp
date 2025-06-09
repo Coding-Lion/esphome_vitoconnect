@@ -72,7 +72,7 @@ void OPTOLINKSelect::encode(uint8_t* raw, uint8_t length, const std::string& dat
         if (*endptr == '\0' && key_long >= 0 && key_long <= 255) {
           int key = static_cast<int>(key_long);
           raw[0] = static_cast<uint8_t>(key);
-          ESP_LOGD(TAG, "Encoded option '%s' to value %d", data.c_str(), key);
+          ESP_LOGD(TAG, "Encoded option '%s' to value %d, raw[0] = 0x%02X", data.c_str(), key, raw[0]);
           return;
         } else {
           ESP_LOGW(TAG, "Invalid key '%s' for encoding", it->first.c_str());
@@ -100,12 +100,11 @@ void OPTOLINKSelect::control(const std::string& value) {
     if (it->second == value) {
       ESP_LOGI(TAG, "Control of select %s to value %s", get_name().c_str(), it->first.c_str());
       
-      // Encode the value to raw data
-      uint8_t raw_data[1];
-      encode(raw_data, 1, value);
+      // Encode the value to the member buffer
+      encode(write_buffer_, 1, value);
       
       // Write to device via parent component
-      bool success = parent_->write_datapoint(this, raw_data, 1);
+      bool success = parent_->write_datapoint(this, write_buffer_, 1);
       
       if (success) {
         ESP_LOGD(TAG, "Write request sent successfully");
