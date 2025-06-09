@@ -128,6 +128,7 @@ void OptolinkKW::_send() {
     buff[3] = length;
     // add value to message
     memcpy(&buff[4], dp->data, length);
+    ESP_LOGD(TAG, "KW send: writing data[0] = 0x%02X to address 0x%04X", dp->data[0], address);
     _rcvLen = 1;  // expected answer length is only ACK (0x00)
     _uart->write_array(buff, 4 + length);
   } else {

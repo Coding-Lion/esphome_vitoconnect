@@ -100,6 +100,8 @@ bool VitoConnect::write_datapoint(Datapoint* datapoint, uint8_t* data, uint8_t l
     return false;
   }
   
+  ESP_LOGD(TAG, "write_datapoint called with data[0] = 0x%02X", data[0]);
+  
   CbArg* arg = new CbArg(this, datapoint);
   bool success = _optolink->write(datapoint->getAddress(), length, data, reinterpret_cast<void*>(arg));
   

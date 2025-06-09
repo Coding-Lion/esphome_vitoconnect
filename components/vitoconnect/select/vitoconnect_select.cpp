@@ -102,6 +102,7 @@ void OPTOLINKSelect::control(const std::string& value) {
       
       // Encode the value to the member buffer
       encode(write_buffer_, 1, value);
+      ESP_LOGD(TAG, "After encode, write_buffer_[0] = 0x%02X", write_buffer_[0]);
       
       // Write to device via parent component
       bool success = parent_->write_datapoint(this, write_buffer_, 1);
